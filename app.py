@@ -15,13 +15,23 @@ def index():
 @app.route('/pedidos', methods=['POST'])
 def registrar_pedido():
     data = request.get_json()
+    # pedido = {
+    #     'id': len(pedidos) + 1,
+    #     'mesa': data['mesa'],
+    #     'fecha': datetime.now().isoformat(),
+    #     'estado': 'pendiente',
+    #     'items': data['items'],
+    # }
     pedido = {
-        'id': len(pedidos) + 1,
-        'mesa': data['mesa'],
-        'fecha': datetime.now().isoformat(),
-        'estado': 'pendiente',
-        'items': data['items'],
+    'id': len(pedidos) + 1,
+    'mesa': data['mesa'],
+    'fecha': datetime.now().isoformat(),
+    'estado': 'pendiente',
+    'items': data['items'],
+    'pagado': False,
+    'tipo_pago': None
     }
+
     pedidos.append(pedido)
     return jsonify({'mensaje': 'Pedido registrado', 'pedido': pedido}), 201
 
