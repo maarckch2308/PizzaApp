@@ -24,6 +24,7 @@ def registrar_pedido():
         'pagado': data.get('pagado', False),
         'metodo_pago': data.get('metodo_pago', 'efectivo'),
         'items': data['items'],
+        'para_resumen': False,  # Nuevo campo para resumen
     }
     pedidos.append(pedido)
     return jsonify({'mensaje': 'Pedido registrado', 'pedido': pedido}), 201
@@ -31,18 +32,35 @@ def registrar_pedido():
 @app.route('/pedidos', methods=['GET'])
 def obtener_pedidos():
     estado = request.args.get('estado')
+    para_resumen = request.args.get('para_resumen')
+
+    resultado = pedidos
+
     if estado:
-        resultado = [p for p in pedidos if p['estado'] == estado]
-    else:
-        resultado = pedidos
+        resultado = [p for p in resultado if p['estado'] == estado]
+
+    if para_resumen is not None:
+        # Convertir string a bool
+        para_resumen_bool = para_resumen.lower() == 'true'
+        resultado = [p for p in resultado if p.get('para_resumen', False) == para_resumen_bool]
+
     return jsonify(resultado), 200
 
 @app.route('/pedidos/<int:pedido_id>', methods=['PATCH'])
-def actualizar_estado(pedido_id):
+def actualizar_pedido(pedido_id):
+    data = request.get_json()
     for pedido in pedidos:
         if pedido['id'] == pedido_id:
-            pedido['estado'] = 'listo'
-            return jsonify({'mensaje': 'Estado actualizado', 'pedido': pedido}), 200
+            # Actualizar los campos que se envíen
+            if 'estado' in data:
+                pedido['estado'] = data['estado']
+            if 'pagado' in data:
+                pedido['pagado'] = data['pagado']
+            if 'metodo_pago' in data:
+                pedido['metodo_pago'] = data['metodo_pago']
+            if 'para_resumen' in data:
+                pedido['para_resumen'] = data['para_resumen']
+            return jsonify({'mensaje': 'Pedido actualizado', 'pedido': pedido}), 200
     return jsonify({'mensaje': 'Pedido no encontrado'}), 404
 
 @app.route('/pedidos_por_dia', methods=['GET'])
