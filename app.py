@@ -53,6 +53,16 @@ def obtener_pedidos_agrupados():
         agrupado[fecha].append(pedido)
     return jsonify(agrupado), 200
 
+@app.route('/pedidos/<int:pedido_id>', methods=['DELETE'])
+def eliminar_pedido(pedido_id):
+    global pedidos
+    for pedido in pedidos:
+        if pedido['id'] == pedido_id:
+            pedidos = [p for p in pedidos if p['id'] != pedido_id]
+            return jsonify({'mensaje': 'Pedido eliminado'}), 200
+    return jsonify({'mensaje': 'Pedido no encontrado'}), 404
+
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
