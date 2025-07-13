@@ -80,6 +80,21 @@ def eliminar_pedido(pedido_id):
             return jsonify({'mensaje': 'Pedido eliminado'}), 200
     return jsonify({'mensaje': 'Pedido no encontrado'}), 404
 
+@app.route('/guardar_resumen_dia', methods=['POST'])
+def guardar_resumen_dia():
+    fecha_actual = datetime.now().isoformat()[:10]  # YYYY-MM-DD
+    actualizados = 0
+    for pedido in pedidos:
+        if (
+            pedido['estado'] == 'listo' and
+            pedido.get('para_resumen') == True and
+            pedido.get('resumen_guardado') == False and
+            pedido['fecha'].startswith(fecha_actual)
+        ):
+            pedido['resumen_guardado'] = True
+            actualizados += 1
+    return jsonify({'mensaje': f'{actualizados} pedidos marcados como resumen guardado'}), 200
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
