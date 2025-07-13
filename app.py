@@ -10,7 +10,7 @@ pedidos = []  # Lista para almacenar pedidos
 
 @app.route('/')
 def index():
-    return "Servidor Flask en Heroku funcionando correctamente 🚀"
+    return "Servidor funcionando correctamente 🚀"
 
 @app.route('/pedidos', methods=['POST'])
 def registrar_pedido():
@@ -50,6 +50,15 @@ def actualizar_estado(pedido_id):
         if pedido['id'] == pedido_id:
             pedido['estado'] = 'listo'
             return jsonify({'mensaje': 'Estado actualizado', 'pedido': pedido}), 200
+    return jsonify({'mensaje': 'Pedido no encontrado'}), 404
+
+@app.route('/pedidos/<int:pedido_id>', methods=['DELETE'])
+def eliminar_pedido(pedido_id):
+    global pedidos
+    for pedido in pedidos:
+        if pedido['id'] == pedido_id:
+            pedidos = [p for p in pedidos if p['id'] != pedido_id]
+            return jsonify({'mensaje': 'Pedido eliminado'}), 200
     return jsonify({'mensaje': 'Pedido no encontrado'}), 404
 
 # if __name__ == '__main__':
