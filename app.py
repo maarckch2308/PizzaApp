@@ -53,9 +53,11 @@ def actualizar_pedido(pedido_id):
     data = request.get_json()
     for pedido in pedidos:
         if pedido['id'] == pedido_id:
-            # Actualizar los campos que se envíen
             if 'estado' in data:
                 pedido['estado'] = data['estado']
+                if data['estado'] == 'listo':
+                    pedido['para_resumen'] = True
+                    pedido['resumen_guardado'] = False
             if 'pagado' in data:
                 pedido['pagado'] = data['pagado']
             if 'metodo_pago' in data:
@@ -64,6 +66,7 @@ def actualizar_pedido(pedido_id):
                 pedido['para_resumen'] = data['para_resumen']
             return jsonify({'mensaje': 'Pedido actualizado', 'pedido': pedido}), 200
     return jsonify({'mensaje': 'Pedido no encontrado'}), 404
+
 
 @app.route('/pedidos_por_dia', methods=['GET'])
 def obtener_pedidos_agrupados():
