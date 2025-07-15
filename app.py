@@ -24,8 +24,10 @@ def registrar_pedido():
         'pagado': data.get('pagado', False),
         'metodo_pago': data.get('metodo_pago', 'efectivo'),
         'items': data['items'],
-        'para_resumen': False,  # Nuevo campo para resumen
+        'para_resumen': False,
+        'resumen_guardado': False  # <- Aquí
     }
+
     pedidos.append(pedido)
     return jsonify({'mensaje': 'Pedido registrado', 'pedido': pedido}), 201
 
